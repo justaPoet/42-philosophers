@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   Test.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: apoet <apoet@student.42.fr>                +#+  +:+       +#+        */
+/*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/08 18:55:52 by apoet             #+#    #+#             */
-/*   Updated: 2024/09/09 16:37:13 by apoet            ###   ########.fr       */
+/*   Updated: 2024/09/10 15:29:22 by febouana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 //? demo avec 5 philo sans main/argc/argv
 
 #include "philosophers.h"
+
 
 // int ft_waiter_checker()
 // ==> verifie si les forks/spoons du philo passer en arg sont libres
@@ -29,7 +30,18 @@ void philo_routine()
 {
     printf("philo commence a gimgembre\n", "\e[1;33m");
     sleep(0);
-    printf(">>>>>>>>>>>>>philo a fini de gimgembre\n", "\e[1;33m");
+    printf(">>>>>>>>>>>>>philo a fini de gimgembre\n");
+}
+
+void create_spoons(data_t data, int nbr_philo)
+{
+    int i;
+    
+    i = 0;
+    data.spoons[nbr_philo];
+    while (i < nbr_philo)
+        data.spoons[++i] = i + 1;  
+    //printf("SPOONS==%d\n", i);
 }
 
 int main()
@@ -39,6 +51,11 @@ int main()
     data_t data;
     data.φ[nbr_philo];
 
+    if (nbr_philo == 0)
+        return (1);
+    // else
+    //     create_spoons(data, nbr_philo);
+    
     int i = 0;
     while (i < nbr_philo)
     {
