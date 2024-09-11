@@ -6,13 +6,11 @@
 /*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/08 18:55:52 by apoet             #+#    #+#             */
-/*   Updated: 2024/09/10 15:29:22 by febouana         ###   ########.fr       */
+/*   Updated: 2024/09/11 14:32:32 by febouana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-//? demo avec 5 philo sans main/argc/argv
-
-#include "philosophers.h"
+#include "includes/philosophers.h"
 
 
 // int ft_waiter_checker()
@@ -33,51 +31,51 @@ void philo_routine()
     printf(">>>>>>>>>>>>>philo a fini de gimgembre\n");
 }
 
-void create_spoons(data_t data, int nbr_philo)
-{
-    int i;
+// void create_spoons(data_t data, int nbr_philo)
+// {
+//     int i;
     
-    i = 0;
-    data.spoons[nbr_philo];
-    while (i < nbr_philo)
-        data.spoons[++i] = i + 1;  
-    //printf("SPOONS==%d\n", i);
-}
+//     i = 0;
+//     data.spoons[nbr_philo];
+//     while (i < nbr_philo)
+//         data.spoons[++i] = i + 1;  
+//     //printf("SPOONS==%d\n", i);
+// }
 
-int main()
-{ 
-    int nbr_philo = 5;
-    //pthread_t philos[nbr_philo];
-    data_t data;
-    data.φ[nbr_philo];
+// int main()
+// { 
+//     int nbr_philo = 5;
+//     //pthread_t philos[nbr_philo];
+//     data_t data;
+//     data.φ[nbr_philo];
 
-    if (nbr_philo == 0)
-        return (1);
-    // else
-    //     create_spoons(data, nbr_philo);
+//     if (nbr_philo == 0)
+//         return (1);
+//     // else
+//     //     create_spoons(data, nbr_philo);
     
-    int i = 0;
-    while (i < nbr_philo)
-    {
-        if (pthread_create(&data.φ[i], NULL, philo_routine, NULL) != 0)
-            return (1);
-        // if (pthread_create(&philos[i], NULL, philo_routine, NULL) != 0)
-        //     return (1);
-        // if (pthread_join(philos[i], NULL) != 0) //? Possibilite d'integrer directement la condition pthread_join juste apres pthread_create si l'objectif est de sequencer l'ensemble des threads, qu'ils passent chacun leur tour, mais pas utile pour nous ici     
-        //     return (1);
-        printf("main : philo(%d) created\n", i + 1);            
-        i++;
-    }
-    i = 0;
-    // while (i < nbr_philo) //? boucle avec pthread_join necessaire si multithreads PAR CONTRE possibilite d'integrer directement la condition pthread_join juste apres pthread_create si l'objectif est de sequencer l'ensemble des threads, qu'ils passent chacun leur tour, mais pas utile pour nous ici
-    // {
-    //     if (pthread_join(philos[i], NULL) != 0)
-    //         return (1);
-    //     printf("main : philo(%d) joined\n", i + 1);    
-    //     i++;
-    // }
-    return (0);
-}
+//     int i = 0;
+//     while (i < nbr_philo)
+//     {
+//         if (pthread_create(&data.φ[i], NULL, philo_routine, NULL) != 0)
+//             return (1);
+//         // if (pthread_create(&philos[i], NULL, philo_routine, NULL) != 0)
+//         //     return (1);
+//         // if (pthread_join(philos[i], NULL) != 0) //? Possibilite d'integrer directement la condition pthread_join juste apres pthread_create si l'objectif est de sequencer l'ensemble des threads, qu'ils passent chacun leur tour, mais pas utile pour nous ici     
+//         //     return (1);
+//         printf("main : philo(%d) created\n", i + 1);            
+//         i++;
+//     }
+//     i = 0;
+//     // while (i < nbr_philo) //? boucle avec pthread_join necessaire si multithreads PAR CONTRE possibilite d'integrer directement la condition pthread_join juste apres pthread_create si l'objectif est de sequencer l'ensemble des threads, qu'ils passent chacun leur tour, mais pas utile pour nous ici
+//     // {
+//     //     if (pthread_join(philos[i], NULL) != 0)
+//     //         return (1);
+//     //     printf("main : philo(%d) joined\n", i + 1);    
+//     //     i++;
+//     // }
+//     return (0);
+// }
 
 
 //!====================================================================================================================================================

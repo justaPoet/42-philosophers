@@ -1,6 +1,9 @@
 {
     "files.associations": {
+        "*.c": "c",
         "tEST2.C": "cpp",
-        "C.C": "cpp"
+        "C.C": "cpp",
+        "unistd.h": "c",
+        "philosophers.h": "c"
     }
 }
