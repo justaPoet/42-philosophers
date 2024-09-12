@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
+/*   By: apoet <apoet@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 14:50:01 by febouana          #+#    #+#             */
-/*   Updated: 2024/09/12 19:08:23 by febouana         ###   ########.fr       */
+/*   Updated: 2024/09/12 23:31:15 by apoet            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,8 @@ typedef struct philo_status
 	pthread_t		        	philo;
 	long 						philo_id;
 
-	// pthread_mutex_t				spoon_l; //!
-	// pthread_mutex_t				spoon_r; //!
+	// pthread_mutex_t				fork_l; //!
+	// pthread_mutex_t				fork_r; //!
 				
 	bool_t						is_eating; //!
 	bool_t						is_dead; //!
@@ -43,6 +43,7 @@ typedef struct data
 	long 						time_to_die;
 	long 						time_to_eat;
 	long 						time_to_sleep;
+	long						repeat_eat;
 }					       		data_t;
 
 //+ philosophers.c
