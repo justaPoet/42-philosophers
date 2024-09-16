@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: apoet <apoet@student.42.fr>                +#+  +:+       +#+        */
+/*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 14:50:01 by febouana          #+#    #+#             */
-/*   Updated: 2024/09/12 23:31:15 by apoet            ###   ########.fr       */
+/*   Updated: 2024/09/16 20:45:52 by febouana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,8 @@ typedef struct philo_status
 	pthread_t		        	philo;
 	long 						philo_id;
 
-	// pthread_mutex_t				fork_l; //!
-	// pthread_mutex_t				fork_r; //!
+	pthread_mutex_t				fork_l; //!
+	pthread_mutex_t				*fork_r; //!
 				
 	bool_t						is_eating; //!
 	bool_t						is_dead; //!
@@ -52,7 +52,17 @@ typedef struct data
 //
 
 //+ philosophers_utils.c
-long	ft_atol(const char *str);
+void destroy_fork(data_t data);
 
+//+ gestion_errors.c  
+void error();
+void error_prompt(data_t *data);
+void error_forks(data_t *data);
+void good_ending(data_t *data);
+
+//+ libft_utils.c
+long	ft_atol(const char *str);
+void	ft_putchar_fd(char c, int fd);
+void	ft_putstr_fd(char *s, int fd);
 
 #endif
