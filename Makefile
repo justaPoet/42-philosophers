@@ -6,7 +6,7 @@
 #    By: febouana <febouana@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/11 14:53:55 by febouana          #+#    #+#              #
-#    Updated: 2024/09/16 19:38:44 by febouana         ###   ########.fr        #
+#    Updated: 2024/09/17 14:55:22 by febouana         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,6 +19,7 @@ RM = 			rm -f
 NAME = 			philo
 
 SRC =			src/philosophers.c \
+				src/philosophers_routine.c \
 				src/philosophers_utils.c \
 				src/gestion_errors.c \
 				src/libft_utils.c \

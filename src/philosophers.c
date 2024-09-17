@@ -6,22 +6,11 @@
 /*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 14:49:20 by febouana          #+#    #+#             */
-/*   Updated: 2024/09/16 20:48:46 by febouana         ###   ########.fr       */
+/*   Updated: 2024/09/17 21:14:47 by febouana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philosophers.h"
-
-
-//? Creer routine : manger / dormir / penser 
-//! + cas a part si qu'un seul philo (probleme fourchette)
-void *philosopher_routine()
-{
-    printf("philo commence a gimgembre\n");
-    printf("philo a fini de gimgembre\n");
-
-    return (NULL);
-}
 
 void join_philosophers(data_t data)
 {
@@ -41,11 +30,18 @@ void create_philosophers(data_t data)
     int i;
     
     i = 0;
+    //printf("NBR_PHILOS(%ld)\n", data.nbr_philos);
+    
+    printf("-----------------------------------\n");
+    printf("| PHILO N* |   ROUTINE            |\n");
+    printf("-----------------------------------\n");
     while (i < data.nbr_philos)
     {
-        if (pthread_create(&data.philosophers[i].philo, NULL, &philosopher_routine, NULL) != 0)
+        data.philosophers[i].philo_id = i + 1; // normalement apres secu mais besoin dans routine
+        if (pthread_create(&data.philosophers[i].philo, NULL, &philosopher_routine, &data.philosophers[i].philo_id) != 0)
             return ;  //! GESTION ERROR //+ destroy   
-        data.philosophers[i].philo_id = i + 1;
+        // printf("TRUE-PHILO-ID(%d)\n", data.philosophers[i].philo_id);
+        // printf("\n");
         i++;
     }   
 }
@@ -75,7 +71,6 @@ int create_forks(data_t data)
             error_forks(&data); //! peux possiblement free des fork meme pas allouer et segment
             return (2);
         }
-        printf("MUTEX CREE (%d)\n", i + 1);
         i++;
     }   
     assign_fork(data);
@@ -87,7 +82,7 @@ int parsing_args(data_t **data, int argc, char **args)
     (*data)->nbr_philos = ft_atol(args[1]);
     if ((*data)->nbr_philos > 200 || (*data)->nbr_philos == 0)
     {
-        error_prompt(*data);
+        error_prompt();
         return (2); 
     }
     (*data)->time_to_die = ft_atol(args[2]);
@@ -95,19 +90,19 @@ int parsing_args(data_t **data, int argc, char **args)
     (*data)->time_to_sleep = ft_atol(args[4]);
     if (argc == 6)
     {
-        (*data)->repeat_eat = ft_atol(args[5]);
-        if ((*data)->repeat_eat == 0)
+        (*data)->repeat_meal = ft_atol(args[5]);
+        if ((*data)->repeat_meal == 0)
         {
-            error_prompt(*data);
+            error_prompt();
             return (2); 
         }
     }
     else
-        (*data)->repeat_eat = 1;
+        (*data)->repeat_meal = 1;
     return (0);
 }
 
-int	verif_args(data_t *data, char **args)
+int	verif_args(char **args)
 {
 	int	x;
 	int	i;
@@ -120,7 +115,7 @@ int	verif_args(data_t *data, char **args)
 		{
 			if (!(args[x][i] >= '0' && args[x][i] <= '9'))
             {
-                error_prompt(data);
+                error_prompt();
                 return (2);    
             }
 			i++;
@@ -133,20 +128,21 @@ int	verif_args(data_t *data, char **args)
 int main(int argc, char **argv)
 { 
     data_t *data;
+    data = get_data();
     
     if (argc < 5 || 6 < argc)
         return (2);
-    data = malloc(sizeof(data_t));
-    if (!data)
-        return (2);
-    if (verif_args(data, argv) == 2)
+    // data = malloc(sizeof(data_t));
+    // if (!data)
+    //     return (2);
+    if (verif_args(argv) == 2)
         return (2);
     if (parsing_args(&data, argc, argv) == 2)
         return (2);
     data->philosophers = malloc(data->nbr_philos * sizeof(philo_status_t));
     if (!data->philosophers)
     {
-        error_prompt(data);
+        error_prompt();
         return (2);
     }
     if (create_forks(*data) == 2)
@@ -156,7 +152,6 @@ int main(int argc, char **argv)
     good_ending(data);
 }
 
-//! rajouter un verif_args() a la push swap pour exclure tout ce qui n'est pas entre 0 et 9
 //! doit creer un derive de destroy_fork() qui detruit uniquement ceux ayant eu le temps d'etre crees dans create_foeks sinon: 
 //! "Conditional jump or move depends on uninitialised value(s)"
 
