@@ -6,17 +6,18 @@
 /*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 14:50:01 by febouana          #+#    #+#             */
-/*   Updated: 2024/09/17 19:51:51 by febouana         ###   ########.fr       */
+/*   Updated: 2024/09/18 16:46:18 by febouana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILOSOPHERS_H
 # define PHILOSOPHERS_H
-# include <pthread.h> //ABSOLUMENT TOUT
-# include <stdio.h>   //printf
-# include <stdlib.h>  //malloc+free
-# include <string.h>  //memset
-# include <unistd.h>  //usleep
+# include <pthread.h>  //ABSOLUMENT TOUT'
+# include <sys/time.h> //gettimeofday
+# include <stdio.h>    //printf
+# include <stdlib.h>   //malloc+free
+# include <string.h>   //memset
+# include <unistd.h>   //usleep
 
 typedef enum bool
 {
@@ -32,11 +33,17 @@ typedef struct philo_status
 	pthread_mutex_t	fork_l;
 	pthread_mutex_t	*fork_r;
 
-	bool_t is_taking_forks; //!
-	bool_t is_eating;       //!
+	bool_t is_taking_fork_l; 
+	bool_t is_taking_fork_r; 
+
+	bool_t will_eat;       //!
+		bool_t is_eating;       //!
+	
 	bool_t is_thinking;     //!
 	bool_t is_till_dead;    //!
 	bool_t is_dead;         //!
+
+	long long last_meal;
 }					philo_status_t;
 
 typedef struct data
@@ -47,6 +54,7 @@ typedef struct data
 	long			time_to_eat;
 	long			time_to_sleep;
 	long			repeat_meal;
+	long long       start_time;
 }					data_t;
 
 //+ philosophers.c
@@ -60,6 +68,7 @@ void				*philosopher_routine(void *index_philo);
 //+ philosophers_utils.c
 data_t				*get_data(void);
 void				destroy_fork(data_t data);
+long long    		get_current_time(void);
 
 //+ gestion_errors.c
 void				error(void);

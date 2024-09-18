@@ -6,7 +6,7 @@
 /*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 14:49:20 by febouana          #+#    #+#             */
-/*   Updated: 2024/09/17 21:14:47 by febouana         ###   ########.fr       */
+/*   Updated: 2024/09/18 21:00:00 by febouana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,16 @@ void create_philosophers(data_t data)
     i = 0;
     //printf("NBR_PHILOS(%ld)\n", data.nbr_philos);
     
-    printf("-----------------------------------\n");
-    printf("| PHILO N* |   ROUTINE            |\n");
-    printf("-----------------------------------\n");
+    //* printf("-----------------------------------\n");
+    //* printf("| PHILO N* |   ROUTINE            |\n");
+    //* printf("-----------------------------------\n");
+
+    if (data.start_time == -1)
+        return ; //! gestion_errors
+
     while (i < data.nbr_philos)
     {
+        data.philosophers[i].is_till_dead = false;
         data.philosophers[i].philo_id = i + 1; // normalement apres secu mais besoin dans routine
         if (pthread_create(&data.philosophers[i].philo, NULL, &philosopher_routine, &data.philosophers[i].philo_id) != 0)
             return ;  //! GESTION ERROR //+ destroy   
@@ -53,11 +58,11 @@ void assign_fork(data_t data)
     i = 0;
     while (i < data.nbr_philos - 1)
     {
-        data.philosophers[i].fork_r = &data.philosophers[i + 1].fork_l;
+        data.philosophers[i].fork_r = &data.philosophers[i + 1].fork_l; //! VERIFIER SI PAS DE DEBORDEMENT ET QUE philo[nbr_philos] PAS DE PROBLEME
         i++;
     }
     data.philosophers[i].fork_r = &data.philosophers[0].fork_l;
-}
+} 
 
 int create_forks(data_t data)
 {
@@ -88,6 +93,7 @@ int parsing_args(data_t **data, int argc, char **args)
     (*data)->time_to_die = ft_atol(args[2]);
     (*data)->time_to_eat = ft_atol(args[3]);
     (*data)->time_to_sleep = ft_atol(args[4]);
+    (*data)->start_time = get_current_time();
     if (argc == 6)
     {
         (*data)->repeat_meal = ft_atol(args[5]);
@@ -139,6 +145,7 @@ int main(int argc, char **argv)
         return (2);
     if (parsing_args(&data, argc, argv) == 2)
         return (2);
+    //init_vars();
     data->philosophers = malloc(data->nbr_philos * sizeof(philo_status_t));
     if (!data->philosophers)
     {
