@@ -6,7 +6,7 @@
 /*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 14:49:20 by febouana          #+#    #+#             */
-/*   Updated: 2024/09/18 21:00:00 by febouana         ###   ########.fr       */
+/*   Updated: 2024/09/19 21:11:58 by febouana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,6 @@ void create_philosophers(data_t data)
     int i;
     
     i = 0;
-    //printf("NBR_PHILOS(%ld)\n", data.nbr_philos);
-    
     //* printf("-----------------------------------\n");
     //* printf("| PHILO N* |   ROUTINE            |\n");
     //* printf("-----------------------------------\n");
@@ -41,7 +39,9 @@ void create_philosophers(data_t data)
 
     while (i < data.nbr_philos)
     {
-        data.philosophers[i].is_till_dead = false;
+        //data.philosophers[i].is_till_dead = false;
+        data.philosophers[i].repeat_meal_philo = data.repeat_meal; 
+        data.philosophers[i].last_meal = 0; 
         data.philosophers[i].philo_id = i + 1; // normalement apres secu mais besoin dans routine
         if (pthread_create(&data.philosophers[i].philo, NULL, &philosopher_routine, &data.philosophers[i].philo_id) != 0)
             return ;  //! GESTION ERROR //+ destroy   
@@ -104,7 +104,7 @@ int parsing_args(data_t **data, int argc, char **args)
         }
     }
     else
-        (*data)->repeat_meal = 1;
+        (*data)->repeat_meal = -1;
     return (0);
 }
 
@@ -132,20 +132,17 @@ int	verif_args(char **args)
 }
 
 int main(int argc, char **argv)
-{ 
+{     
     data_t *data;
     data = get_data();
     
     if (argc < 5 || 6 < argc)
         return (2);
-    // data = malloc(sizeof(data_t));
-    // if (!data)
-    //     return (2);
     if (verif_args(argv) == 2)
         return (2);
     if (parsing_args(&data, argc, argv) == 2)
         return (2);
-    //init_vars();
+    //init_vars(); // initialiser toutes les vars de la struct proprement
     data->philosophers = malloc(data->nbr_philos * sizeof(philo_status_t));
     if (!data->philosophers)
     {
@@ -157,6 +154,8 @@ int main(int argc, char **argv)
     create_philosophers(*data);
     join_philosophers(*data);
     good_ending(data);
+
+    //? Each philosopher ate X time(s)
 }
 
 //! doit creer un derive de destroy_fork() qui detruit uniquement ceux ayant eu le temps d'etre crees dans create_foeks sinon: 
