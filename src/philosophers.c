@@ -6,7 +6,7 @@
 /*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 14:49:20 by febouana          #+#    #+#             */
-/*   Updated: 2024/09/19 21:11:58 by febouana         ###   ########.fr       */
+/*   Updated: 2024/09/20 03:11:47 by febouana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ void create_philosophers(data_t data)
         //data.philosophers[i].is_till_dead = false;
         data.philosophers[i].repeat_meal_philo = data.repeat_meal; 
         data.philosophers[i].last_meal = 0; 
+        data.philosophers[i].last_last_meal = 0; 
         data.philosophers[i].philo_id = i + 1; // normalement apres secu mais besoin dans routine
         if (pthread_create(&data.philosophers[i].philo, NULL, &philosopher_routine, &data.philosophers[i].philo_id) != 0)
             return ;  //! GESTION ERROR //+ destroy   

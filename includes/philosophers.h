@@ -6,7 +6,7 @@
 /*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 14:50:01 by febouana          #+#    #+#             */
-/*   Updated: 2024/09/19 19:06:25 by febouana         ###   ########.fr       */
+/*   Updated: 2024/09/20 03:07:21 by febouana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,9 @@ typedef struct philo_status
 	bool_t 			is_thinking;  //!
 	bool_t 			is_till_dead; //!
 	bool_t 			is_dead;      //!
+	
 	long long		last_meal;
+	long long		last_last_meal;
 }					philo_status_t;
 
 typedef struct data

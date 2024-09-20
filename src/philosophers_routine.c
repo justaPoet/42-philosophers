@@ -6,7 +6,7 @@
 /*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 14:52:56 by febouana          #+#    #+#             */
-/*   Updated: 2024/09/20 02:01:59 by febouana         ###   ########.fr       */
+/*   Updated: 2024/09/20 03:23:02 by febouana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,48 +20,53 @@
 
 //! CAS CALCULER SI PHILO IMPAIR OU PAIR DE BASE ET QUELLE GRP FAIRE MANGE EN PREMIER EST LE PLUS OPTI
 void complet_routine(data_t *data, int id)
-{
+{     
     if (id % 2 != 0)
         usleep(data->time_to_eat * 1000);
-    //? DEBUT        
-    data->philosophers[id].will_eat = true;    
-    //? is_taking_fork_l (la sienne)
-    data->philosophers[id].is_taking_fork_l = true;
-    pthread_mutex_lock(&data->philosophers[id].fork_l);
-    printf("%lld 🍴 (%d) took the left fork\n", get_current_time() - data->start_time, id + 1);
-            
-    //? is_taking_fork_r (celle du philo de droite)
-    data->philosophers[id].is_taking_fork_r = true;
-    pthread_mutex_lock(data->philosophers[id].fork_r);
-    printf("%lld 🍴 (%d) took the right fork\n", get_current_time() - data->start_time, id + 1);
-
-             
-    if ((data->time_to_die) <= get_current_time() - data->start_time - data->philosophers->last_meal)
+    while(1)
+    {    
+    printf("(%d)>>>lastmeal==%lld | ", id + 1, data->philosophers[id].last_meal); 
+    printf("(%d)>>>lastlastmeal==%lld\n", id + 1, data->philosophers[id].last_last_meal);  
+    printf("(%d)>>>LASTMEAL-LASTLASTMEAL==%lld\n\n", id + 1, data->philosophers[id].last_meal - data->philosophers[id].last_last_meal);   
+      
+    if (data->time_to_die <= (data->philosophers[id].last_meal - data->philosophers[id].last_last_meal))
     {
         printf("\n\n☠️ ISSSSSS DEAD =======================================================\n\n");
         exit(2);   
     }
         
-    //? is_eating
+//? DEBUT        
+    data->philosophers[id].will_eat = true;    
+//? is_taking_fork_l (la sienne)
+    data->philosophers[id].is_taking_fork_l = true;
+    pthread_mutex_lock(&data->philosophers[id].fork_l);
+    printf("%lld 🍴 (%d) took the left fork\n", get_current_time() - data->start_time, id + 1);
+            
+//? is_taking_fork_r (celle du philo de droite)
+    data->philosophers[id].is_taking_fork_r = true;
+    pthread_mutex_lock(data->philosophers[id].fork_r);
+    printf("%lld 🍴 (%d) took the right fork\n", get_current_time() - data->start_time, id + 1);
+        
+//? is_eating
     printf("%lld 🍝 (%d) is eating\n", get_current_time() - data->start_time, id + 1);
     usleep(data->time_to_eat * 1000);
     data->philosophers[id].repeat_meal_philo--;
-    printf("\n\n(%d)>>>1TIME==%lld\n\n", id + 1, data->philosophers->last_meal);      
-    data->philosophers[id].last_meal = get_current_time(); //+ marque le temps qui s'est ecoule depuis debut du prog ou philo a manger pour la dernier fois
-    printf("\n\n(%d)>>>2TIME==%lld\n\n", id + 1, data->philosophers->last_meal);      
+    
+    data->philosophers[id].last_last_meal = data->philosophers[id].last_meal;     
+    data->philosophers[id].last_meal = get_current_time() - data->start_time; //+ marque le temps qui s'est ecoule depuis debut du prog ou philo a manger pour la dernier foi
 
-    //? put down fork_l and fork_r
+//? put down fork_l and fork_r
     pthread_mutex_unlock(&data->philosophers[id].fork_l); 
     data->philosophers[id].is_taking_fork_l = false;
     pthread_mutex_unlock(data->philosophers[id].fork_r);
     data->philosophers[id].is_taking_fork_r = false;
         
-    //? FIN
+//? FIN
     data->philosophers[id].will_eat = false;
     printf("%lld 💤 (%d) is sleeping\n", get_current_time() - data->start_time, id + 1);
     usleep(data->time_to_sleep * 1000); //OKOK
     printf("%lld 🤔 (%d) is thinking\n", get_current_time() - data->start_time, id + 1);
-}
+}}
 
 //? Creer routine : manger / dormir / penser
 void	*philosopher_routine(void *index)
@@ -72,8 +77,8 @@ void	*philosopher_routine(void *index)
     data = get_data();
     int id = *(int*)index - 1; //pour revenir a un index propre
     
-    while (1){
-        complet_routine(data, id);}
+
+    complet_routine(data, id);
     
 
     // die(data, id)
