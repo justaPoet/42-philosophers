@@ -6,7 +6,7 @@
 /*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 14:50:01 by febouana          #+#    #+#             */
-/*   Updated: 2024/09/20 03:07:21 by febouana         ###   ########.fr       */
+/*   Updated: 2024/09/23 00:06:52 by febouana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,51 +25,52 @@ typedef enum bool
 	true
 }					bool_t;
 
+//* NETTOYAGE ALGO
+//* ==> check si les mutex sont utilises pour checker le status des fork
+//* ==> checker comment la mort des philos sont verifies et s'il y a un mutex pour eviter un philosophe de mourrir (triche)
+
+//* cas relou si 1 seul philo (+ revoir les initialisations ??)
+
 typedef struct philo_status
 {
-	pthread_t		philo;
-	int				philo_id;
-	int				repeat_meal_philo;
+	pthread_t			philo;
+	int					philo_id;
+	int					repeat_meal_philo;
+	pthread_mutex_t		fork_l;
+	pthread_mutex_t		*fork_r;
+	long long			last_meal;
+	long long			last_last_meal;
 
-	pthread_mutex_t	fork_l;
-	pthread_mutex_t	*fork_r;
-
-	bool_t			is_taking_fork_l;
-	bool_t			is_taking_fork_r;
-
-	bool_t 			will_eat;  //!
-	bool_t 			is_eating; //!
-
-	bool_t 			is_thinking;  //!
-	bool_t 			is_till_dead; //!
-	bool_t 			is_dead;      //!
+	pthread_mutex_t		is_dead; //! si un  philo mort
 	
-	long long		last_meal;
-	long long		last_last_meal;
 }					philo_status_t;
 
 typedef struct data
 {
 	philo_status_t	*philosophers;
-	long			nbr_philos;
-	long			time_to_die;
-	long			time_to_eat;
-	long			time_to_sleep;
+	long			nbr_philos; //+ ou unsigned 
+	long			time_to_die; //+ ou unsigned 
+	long			time_to_eat; //+ ou unsigned 
+	long			time_to_sleep; //+ ou unsigned 
 	long			repeat_meal;
 	long long		start_time;
 }					data_t;
 
 //+ philosophers.c
-//
+void join_philosophers(data_t data);
 //
 //
 
 //+ philosophers_routine.c
-void				*philosopher_routine(void *index_philo);
+int  				philo_is_dead(data_t *data, int id);
+int 				philo_is_eating(data_t *data, int id);
+void 				philo_is_sleeping_thinking(data_t *data, int id);
+void				*philosopher_routine(void *index);
 
 //+ philosophers_utils.c
 data_t				*get_data(void);
 void				destroy_fork(data_t data);
+int 				ft_usleep(data_t *data, long long obj_usleep);
 long long			get_current_time(void);
 
 //+ gestion_errors.c

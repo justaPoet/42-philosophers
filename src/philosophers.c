@@ -6,7 +6,7 @@
 /*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 14:49:20 by febouana          #+#    #+#             */
-/*   Updated: 2024/09/20 03:11:47 by febouana         ###   ########.fr       */
+/*   Updated: 2024/09/23 00:15:42 by febouana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ void create_philosophers(data_t data)
         // printf("\n");
         i++;
     }   
+    
 }
 
 void assign_fork(data_t data)
@@ -83,6 +84,29 @@ int create_forks(data_t data)
     return (0);
 }
 
+int	verif_args(char **args)
+{
+	int	x;
+	int	i;
+
+	x = 1;
+	while (args[x])
+	{
+		i = 0;
+		while (args[x][i])
+		{
+			if (!(args[x][i] >= '0' && args[x][i] <= '9'))
+            {
+                error_prompt();
+                return (2);    
+            }
+			i++;
+		}
+		x++;
+	}
+    return (0);
+}
+
 int parsing_args(data_t **data, int argc, char **args)
 {
     (*data)->nbr_philos = ft_atol(args[1]);
@@ -109,28 +133,21 @@ int parsing_args(data_t **data, int argc, char **args)
     return (0);
 }
 
-int	verif_args(char **args)
-{
-	int	x;
-	int	i;
+// void init_vars(data_t *data)
+// {
+//     data->nbr_philos = 0; 
+// 	data->time_to_die = 0;
+// 	data->time_to_eat = 0;
+// 	data->time_to_sleep = 0;
+// 	data->repeat_meal = 0;
+// 	data->start_time = 0;
 
-	x = 1;
-	while (args[x])
-	{
-		i = 0;
-		while (args[x][i])
-		{
-			if (!(args[x][i] >= '0' && args[x][i] <= '9'))
-            {
-                error_prompt();
-                return (2);    
-            }
-			i++;
-		}
-		x++;
-	}
-    return (0);
-}
+//     // FAIRE BOUCLE INIT PROPRE SUR CHAQUE INDEX
+//     // data.philosophers.philo_id = 0;
+// 	// data.philosophers.repeat_meal_philo = 0;
+// 	// data.philosophers.last_meal = 0;
+// 	// data.philosophers.last_last_mea = 0;
+// }
 
 int main(int argc, char **argv)
 {     
@@ -143,7 +160,7 @@ int main(int argc, char **argv)
         return (2);
     if (parsing_args(&data, argc, argv) == 2)
         return (2);
-    //init_vars(); // initialiser toutes les vars de la struct proprement
+    //init_vars(data); // initialiser toutes les vars de la struct proprement
     data->philosophers = malloc(data->nbr_philos * sizeof(philo_status_t));
     if (!data->philosophers)
     {
@@ -153,13 +170,14 @@ int main(int argc, char **argv)
     if (create_forks(*data) == 2)
         return (2);
     create_philosophers(*data);
+    
     join_philosophers(*data);
     good_ending(data);
 
     //? Each philosopher ate X time(s)
 }
 
-//! doit creer un derive de destroy_fork() qui detruit uniquement ceux ayant eu le temps d'etre crees dans create_foeks sinon: 
+//! doit creer un derive de destroy_fork() qui detruit uniquement ceux ayant eu le temps d'etre crees dans create_forks sinon: 
 //! "Conditional jump or move depends on uninitialised value(s)"
 
 //? si il n'y a qu'un seul philo fork_r == fork_l ATTENTION AUX DEADLOCK ET PREVOIR UN CAS A PART PENDANT L'ALGO
