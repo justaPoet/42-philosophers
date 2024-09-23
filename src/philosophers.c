@@ -6,7 +6,7 @@
 /*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 14:49:20 by febouana          #+#    #+#             */
-/*   Updated: 2024/09/23 00:15:42 by febouana         ###   ########.fr       */
+/*   Updated: 2024/09/23 19:57:06 by febouana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,6 @@ void create_philosophers(data_t data)
         // printf("\n");
         i++;
     }   
-    
 }
 
 void assign_fork(data_t data)
@@ -133,20 +132,15 @@ int parsing_args(data_t **data, int argc, char **args)
     return (0);
 }
 
+// Plus d'erreurs qd j'initie ma struct... ok?
 // void init_vars(data_t *data)
 // {
 //     data->nbr_philos = 0; 
 // 	data->time_to_die = 0;
 // 	data->time_to_eat = 0;
 // 	data->time_to_sleep = 0;
-// 	data->repeat_meal = 0;
+// 	data->repeat_meal = -1;
 // 	data->start_time = 0;
-
-//     // FAIRE BOUCLE INIT PROPRE SUR CHAQUE INDEX
-//     // data.philosophers.philo_id = 0;
-// 	// data.philosophers.repeat_meal_philo = 0;
-// 	// data.philosophers.last_meal = 0;
-// 	// data.philosophers.last_last_mea = 0;
 // }
 
 int main(int argc, char **argv)
@@ -156,11 +150,11 @@ int main(int argc, char **argv)
     
     if (argc < 5 || 6 < argc)
         return (2);
+    //init_vars(data); //! + d'erreurs qu'avant
     if (verif_args(argv) == 2)
         return (2);
     if (parsing_args(&data, argc, argv) == 2)
         return (2);
-    //init_vars(data); // initialiser toutes les vars de la struct proprement
     data->philosophers = malloc(data->nbr_philos * sizeof(philo_status_t));
     if (!data->philosophers)
     {
@@ -172,20 +166,19 @@ int main(int argc, char **argv)
     create_philosophers(*data);
     
     join_philosophers(*data);
-    good_ending(data);
-
-    //? Each philosopher ate X time(s)
+    if (data->repeat_meal >= 1)
+        printf("\nEach philosopher ate %ld time(s) 🏆\n", data->repeat_meal);
+    printf("GOOD ENDING YOUHOUUUU 🍝🍝🍝🍝🍝🍝🍝🍝🍝\n\n");
+    free(data->philosophers);
 }
 
 //! doit creer un derive de destroy_fork() qui detruit uniquement ceux ayant eu le temps d'etre crees dans create_forks sinon: 
 //! "Conditional jump or move depends on uninitialised value(s)"
+//+ CAS philo alone assigniaton fork_l et fork_r 
 
-//? si il n'y a qu'un seul philo fork_r == fork_l ATTENTION AUX DEADLOCK ET PREVOIR UN CAS A PART PENDANT L'ALGO
-//+ CODER ALGO:
-    //+ ==> routine precise phil (manger, dormir, penser)
-        //+ // systeme d'etat "is_eating" + "is_dead" (+ "till_dead ??)?"
-    //+ ==> systeme de priorite // "till_dead" ??
 
+
+//* STOCKER L'INFO DE QUI EST MORT EN PREMIER ET LA RECRACHER A LA FIN DU MAIN A LA TTE FIN COMME CA PAS DE "DOUBLON"
 
 // void test_fork(data_t data)
 // {

@@ -6,7 +6,7 @@
 /*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 14:50:01 by febouana          #+#    #+#             */
-/*   Updated: 2024/09/23 00:06:52 by febouana         ###   ########.fr       */
+/*   Updated: 2024/09/23 19:46:24 by febouana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,6 @@ typedef struct philo_status
 	long long			last_meal;
 	long long			last_last_meal;
 
-	pthread_mutex_t		is_dead; //! si un  philo mort
-	
 }					philo_status_t;
 
 typedef struct data
@@ -54,6 +52,8 @@ typedef struct data
 	long			time_to_sleep; //+ ou unsigned 
 	long			repeat_meal;
 	long long		start_time;
+
+	bool_t				dead; //! si un philo mort
 }					data_t;
 
 //+ philosophers.c
@@ -62,16 +62,20 @@ void join_philosophers(data_t data);
 //
 
 //+ philosophers_routine.c
-int  				philo_is_dead(data_t *data, int id);
-int 				philo_is_eating(data_t *data, int id);
-void 				philo_is_sleeping_thinking(data_t *data, int id);
+int 				verif_eating(data_t *data, long obj_usleep, int id);
+int 				verif_sleeping(data_t *data, long obj_usleep, int id);
+int 				complet_routine(data_t *data, int id);
 void				*philosopher_routine(void *index);
 
 //+ philosophers_utils.c
 data_t				*get_data(void);
 void				destroy_fork(data_t data);
-int 				ft_usleep(data_t *data, long long obj_usleep);
+
+int  				check_death(data_t *data, int id);
+int  				check_death_solo(data_t *data, int id);
 long long			get_current_time(void);
+
+int print_action(data_t data, long long time, char *emoji, char *action, int id);
 
 //+ gestion_errors.c
 void				error(void);

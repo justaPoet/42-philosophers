@@ -6,75 +6,92 @@
 /*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 14:52:56 by febouana          #+#    #+#             */
-/*   Updated: 2024/09/23 00:16:22 by febouana         ###   ########.fr       */
+/*   Updated: 2024/09/23 19:49:31 by febouana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philosophers.h"
 
-// 1 🍴 takes forks
-// 2 🍝 is_eating
-// 3 💤 is_sleeping
-// 4 🤔 is_thinking (apres sleep oeoe)
-// 5 ☠️  IS DEAD
-
-int  check_death(data_t *data, int id)
+int verif_eating(data_t *data, long obj_usleep, int id)
 {
-    //!appel fn verif pour chaque philo si un philo est mort
-    
-    if (data->nbr_philos == 1) 
-        usleep(data->time_to_die * 1000);
-    if ((data->nbr_philos == 1) || (data->time_to_die <= (data->philosophers[id].last_meal - data->philosophers[id].last_last_meal)))
+    if (obj_usleep >= data->time_to_die)
     {
-        join_philosophers(*data);
         destroy_fork(*data);
-        printf("%lld ☠️  (%d) IS DEAD ====================================================\n", get_current_time() - data->start_time, id + 1);
+        //join_philosophers(*data);
+    //print_action(*data, get_current_time() - data->start_time, "☠️" ,"IS DEAD DE FOU MALADE\n", id + 1);
+    printf("%lld ☠️  (%d) IS DEAD (too long time to eat 🍝)\n", get_current_time() - data->start_time, id + 1); 
+        usleep(data->time_to_die * 1000);
         return (2);
+    }    
+print_action(*data, get_current_time() - data->start_time, "🍝" ,"IS EATING\n", id + 1);    
+// printf("%lld 🍝 (%d) is eating\n", get_current_time() - data->start_time, id + 1);
+    data->philosophers[id].last_last_meal = data->philosophers[id].last_meal;     
+    data->philosophers[id].last_meal = get_current_time() - data->start_time;
+    usleep(obj_usleep * 1000);
+    return (0);
+}
+
+int verif_sleeping(data_t *data, long obj_usleep, int id)
+{
+
+    if (obj_usleep >= data->time_to_die)
+    {
+        destroy_fork(*data);
+        //join_philosophers(*data);
+        usleep(data->time_to_die * 1000);
+        printf("%lld ☠️  (%d) IS DEAD (too long time to sleep 💤)\n", get_current_time() - data->start_time, id + 1);
+        return (2);
+    }
+print_action(*data, get_current_time() - data->start_time, "💤" ,"IS SLEEPING\n", id + 1);  
+// printf("%lld 💤 (%d) is sleeping\n", get_current_time() - data->start_time, id + 1);
+    usleep(obj_usleep * 1000);
+    return (0);
+}
+
+int complet_routine(data_t *data, int id)
+{    
+    while(data->dead != true && (data->philosophers[id].repeat_meal_philo != 0))
+    { 
+        if (check_death(data, id) == 2)
+            return (2);
+        pthread_mutex_lock(&data->philosophers[id].fork_l);
+
+    print_action(*data, get_current_time() - data->start_time, "🍴" ,"HAS TAKEN A FORK\n", id + 1);       
+    //printf("%lld 🍴 (%d) has taken a fork\n", get_current_time() - data->start_time, id + 1);
+        if (data->nbr_philos == 1)
+            if (check_death_solo(data, id) == 2)
+                return (2);
+        pthread_mutex_lock(data->philosophers[id].fork_r);
+    print_action(*data, get_current_time() - data->start_time, "🍴" ,"HAS TAKEN A FORK\n", id + 1);       
+    //printf("%lld 🍴 (%d) has taken a fork\n", get_current_time() - data->start_time, id + 1);
+        if (verif_eating(data, data->time_to_eat, id) == 2)
+            return (2);
+        pthread_mutex_unlock(&data->philosophers[id].fork_l); 
+        pthread_mutex_unlock(data->philosophers[id].fork_r);
+        if (verif_sleeping(data, data->time_to_sleep, id) == 2)
+            return (2);
+
+    print_action(*data, get_current_time() - data->start_time, "🤔" ,"IS THINKING\n", id + 1);       
+    // printf("%lld 🤔 (%d) is thinking\n", get_current_time() - data->start_time, id + 1);
+        data->philosophers[id].repeat_meal_philo--;
     }
     return (0);
 }
 
-int philo_is_eating(data_t *data, int id)
-{      
-    pthread_mutex_lock(&data->philosophers[id].fork_l);
-    printf("%lld 🍴 (%d) has taken a fork\n", get_current_time() - data->start_time, id + 1);
-    if (check_death(data, id) == 2)
-        return (2);
-    pthread_mutex_lock(data->philosophers[id].fork_r);
-    printf("%lld 🍴 (%d) has taken a fork\n", get_current_time() - data->start_time, id + 1);
-    printf("%lld 🍝 (%d) is eating\n", get_current_time() - data->start_time, id + 1);
-    if (ft_usleep(data, data->time_to_eat * 1000))
-        check_death(data, id);
-    data->philosophers[id].last_last_meal = data->philosophers[id].last_meal;     
-    data->philosophers[id].last_meal = get_current_time() - data->start_time;
-    pthread_mutex_unlock(&data->philosophers[id].fork_l); 
-    pthread_mutex_unlock(data->philosophers[id].fork_r);
-    return (0);
-}
-
-void philo_is_sleeping_thinking(data_t *data, int id)
-{
-    printf("%lld 💤 (%d) is sleeping\n", get_current_time() - data->start_time, id + 1);
-    if (ft_usleep(data, data->time_to_sleep) == 2)
-        check_death(data, id);
-    printf("%lld 🤔 (%d) is thinking\n", get_current_time() - data->start_time, id + 1);
-}
 
 void	*philosopher_routine(void *index)
 {
     data_t *data;
+    int id;
     data = get_data();
-    int id = *(int*)index - 1;
+    id = *(int*)index - 1;
+
+    data->dead = false;
 
     if (id % 2 != 0)
         usleep(data->time_to_eat * 1000);
-    while(data->philosophers[id].repeat_meal_philo != 0)
-    {
-        if (philo_is_eating(data, id) == 2)
-            exit (2); //! sortie propre 
-        data->philosophers[id].repeat_meal_philo--;
-        philo_is_sleeping_thinking(data, id);	
-    }
+    complet_routine(data, id);
+    exit(2);
     return (NULL);
 }
 
@@ -94,9 +111,54 @@ void	*philosopher_routine(void *index)
 
 
 
+//!
+// int complet_routine(data_t *data, int id)
+// {     
+//     if (check_death(data, id) == 2)
+//         return (2);
+//     pthread_mutex_lock(&data->philosophers[id].fork_l);
+//     printf("%lld 🍴 (%d) has taken a fork\n", get_current_time() - data->start_time, id + 1);
+//     if (data->nbr_philos == 1)
+//         if (check_death_solo(data, id) == 2)
+//             return (2);
+//     pthread_mutex_lock(data->philosophers[id].fork_r);
+//     printf("%lld 🍴 (%d) has taken a fork\n", get_current_time() - data->start_time, id + 1);
+//     if (verif_eating(data, data->time_to_eat, id) == 2)
+//         return (2);
+//     // data->philosophers[id].last_last_meal = data->philosophers[id].last_meal;     
+//     // data->philosophers[id].last_meal = get_current_time() - data->start_time;
+//     pthread_mutex_unlock(&data->philosophers[id].fork_l); 
+//     pthread_mutex_unlock(data->philosophers[id].fork_r);
+//     if (verif_sleeping(data, data->time_to_sleep, id) == 2)
+//         return (2);
+//     printf("%lld 🤔 (%d) is thinking\n", get_current_time() - data->start_time, id + 1);
+//     return (0);
+// }
 
 
+// void	*philosopher_routine(void *index)
+// {
+//     data_t *data;
+//     int id;
+//     data = get_data();
+//     id = *(int*)index - 1;
 
+//     data->dead = false;
+
+//     if (id % 2 != 0)
+//         usleep(data->time_to_eat * 1000);
+//     while(data->dead != true && (data->philosophers[id].repeat_meal_philo != 0))
+//     {
+//         if (complet_routine(data, id) == 2)
+//         {
+//             printf("\n\nSORTIE PROPRE YOUHOUUUU 🍝🍝🍝🍝🍝🍝🍝🍝🍝\n\n");
+//             return (NULL);
+//         }
+//         data->philosophers[id].repeat_meal_philo--;
+//     }
+//     return (NULL);
+// }
+//!
 
 
 
