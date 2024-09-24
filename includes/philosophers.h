@@ -6,7 +6,7 @@
 /*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 14:50:01 by febouana          #+#    #+#             */
-/*   Updated: 2024/09/23 19:46:24 by febouana         ###   ########.fr       */
+/*   Updated: 2024/09/24 19:11:42 by febouana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,10 @@ typedef struct philo_status
 	int					repeat_meal_philo;
 	pthread_mutex_t		fork_l;
 	pthread_mutex_t		*fork_r;
+
+    bool_t 				left_locked;
+    bool_t 				right_locked;			
+	
 	long long			last_meal;
 	long long			last_last_meal;
 
@@ -46,14 +50,20 @@ typedef struct philo_status
 typedef struct data
 {
 	philo_status_t	*philosophers;
-	long			nbr_philos; //+ ou unsigned 
-	long			time_to_die; //+ ou unsigned 
-	long			time_to_eat; //+ ou unsigned 
-	long			time_to_sleep; //+ ou unsigned 
+	long			nbr_philos;
+	long			time_to_die;
+	long			time_to_eat; 
+	long			time_to_sleep;
 	long			repeat_meal;
 	long long		start_time;
 
-	bool_t				dead; //! si un philo mort
+	bool_t			dead; //! si un philo mort
+	int 			id_philo_dead;
+	long long 		time_death;	
+
+	pthread_mutex_t print;
+
+	
 }					data_t;
 
 //+ philosophers.c
@@ -87,5 +97,9 @@ void				good_ending(data_t *data);
 long				ft_atol(const char *str);
 void				ft_putchar_fd(char c, int fd);
 void				ft_putstr_fd(char *s, int fd);
+
+
+data_t 				*get_data_copy();
+void 				unlock_forks(data_t data, int id);
 
 #endif

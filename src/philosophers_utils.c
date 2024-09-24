@@ -6,7 +6,7 @@
 /*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 16:37:57 by febouana          #+#    #+#             */
-/*   Updated: 2024/09/23 19:52:48 by febouana         ###   ########.fr       */
+/*   Updated: 2024/09/24 19:23:29 by febouana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,16 +44,16 @@ void destroy_fork(data_t data)
 }
 
 int  check_death(data_t *data, int id)
-{
+{ 
     if (data->time_to_die <= (data->philosophers[id].last_meal - data->philosophers[id].last_last_meal))
     {
-        long long time_death =  get_current_time() - data->start_time;
         if (data->dead == false)
+        {    
             data->dead = true;
-        //join_philosophers(*data);
-        destroy_fork(*data);
-        usleep(1000);
-        printf("%lld ☠️  (%d) IS DEAD (last_meal/last_last_meal) \n", time_death, id + 1);
+            data->id_philo_dead = id;
+            data->time_death =  get_current_time() - data->start_time;
+            unlock_forks(*data, id);
+        }
         return (2);
     }
     return (0);
@@ -61,10 +61,12 @@ int  check_death(data_t *data, int id)
 
 int  check_death_solo(data_t *data, int id)
 {
-    destroy_fork(*data);
+    if (data->philosophers[id].left_locked)
+        pthread_mutex_unlock(&data->philosophers[id].fork_l);
     usleep(data->time_to_die * 1000);
-    //join_philosophers(*data);
-    printf("%lld ☠️  (%d) IS DEAD (no right fork) \n", get_current_time() - data->start_time, id + 1);
+    data->dead = true;
+    data->id_philo_dead = id;
+    data->time_death =  get_current_time() - data->start_time;
     return (2);
 }
 
@@ -72,6 +74,16 @@ int print_action(data_t data, long long time, char *emoji, char *action, int id)
 {
     if (data.dead == true )
         return (2);
+    pthread_mutex_lock(&data.print);
     printf("%lld %s (%d) %s", time, emoji, id, action);
+    pthread_mutex_unlock(&data.print);
     return (0);
+}
+
+void unlock_forks(data_t data, int id) 
+{
+    if (data.philosophers[id].right_locked)
+        pthread_mutex_unlock(data.philosophers[id].fork_r);
+    if (data.philosophers[id].left_locked)
+        pthread_mutex_unlock(&data.philosophers[id].fork_l);
 }

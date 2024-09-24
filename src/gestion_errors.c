@@ -6,7 +6,7 @@
 /*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 19:38:53 by febouana          #+#    #+#             */
-/*   Updated: 2024/09/17 19:28:49 by febouana         ###   ########.fr       */
+/*   Updated: 2024/09/24 19:02:56 by febouana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void error_forks(data_t *data)
 
 void good_ending(data_t *data)
 {
-    destroy_fork(*data);
+    //destroy_fork(*data);
     	//test_fork(*data); //fail a fork DONC mutex bien detruit 
 	free(data->philosophers);
     //free(data);

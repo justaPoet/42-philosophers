@@ -6,7 +6,7 @@
 /*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 14:49:20 by febouana          #+#    #+#             */
-/*   Updated: 2024/09/23 19:57:06 by febouana         ###   ########.fr       */
+/*   Updated: 2024/09/24 20:05:25 by febouana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ void create_philosophers(data_t data)
         data.philosophers[i].last_meal = 0; 
         data.philosophers[i].last_last_meal = 0; 
         data.philosophers[i].philo_id = i + 1; // normalement apres secu mais besoin dans routine
+        printf("===%d===\n", i + 1);
         if (pthread_create(&data.philosophers[i].philo, NULL, &philosopher_routine, &data.philosophers[i].philo_id) != 0)
             return ;  //! GESTION ERROR //+ destroy   
         // printf("TRUE-PHILO-ID(%d)\n", data.philosophers[i].philo_id);
@@ -150,7 +151,6 @@ int main(int argc, char **argv)
     
     if (argc < 5 || 6 < argc)
         return (2);
-    //init_vars(data); //! + d'erreurs qu'avant
     if (verif_args(argv) == 2)
         return (2);
     if (parsing_args(&data, argc, argv) == 2)
@@ -164,44 +164,12 @@ int main(int argc, char **argv)
     if (create_forks(*data) == 2)
         return (2);
     create_philosophers(*data);
-    
     join_philosophers(*data);
-    if (data->repeat_meal >= 1)
+    destroy_fork(*data);
+    if (data->repeat_meal > 0)
         printf("\nEach philosopher ate %ld time(s) 🏆\n", data->repeat_meal);
-    printf("GOOD ENDING YOUHOUUUU 🍝🍝🍝🍝🍝🍝🍝🍝🍝\n\n");
+    if (data->dead == true)
+        printf("%lld ☠️  (%d) IS DEAD\n", get_current_time() - data->start_time, data->id_philo_dead + 1);
     free(data->philosophers);
 }
 
-//! doit creer un derive de destroy_fork() qui detruit uniquement ceux ayant eu le temps d'etre crees dans create_forks sinon: 
-//! "Conditional jump or move depends on uninitialised value(s)"
-//+ CAS philo alone assigniaton fork_l et fork_r 
-
-
-
-//* STOCKER L'INFO DE QUI EST MORT EN PREMIER ET LA RECRACHER A LA FIN DU MAIN A LA TTE FIN COMME CA PAS DE "DOUBLON"
-
-// void test_fork(data_t data)
-// {
-//     int i = 0;
-
-//     while (i < data.nbr_philos)
-//     {
-//         // Tester la fourchette gauche
-//         if (pthread_mutex_trylock(&data.philosophers[i].fork_l) == 0)
-//         {
-//             printf("==> Fork LEFT confirmed (%d)\n", i + 1);
-//             pthread_mutex_unlock(&data.philosophers[i].fork_l);
-//         }
-//         else
-//             printf("==> Failed to lock LEFT fork (%d)\n", i + 1);
-//         // Tester la fourchette droite
-//         if (pthread_mutex_trylock(data.philosophers[i].fork_r) == 0)
-//         {
-//             printf("==> Fork RIGHT confirmed (%d)\n", i + 1);
-//             pthread_mutex_unlock(data.philosophers[i].fork_r);
-//         }
-//         else
-//             printf("==> Failed to lock RIGHT fork (%d)\n", i + 1);
-//         i++;
-//     }   
-// }
