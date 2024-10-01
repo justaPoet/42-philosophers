@@ -6,7 +6,7 @@
 /*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 19:38:53 by febouana          #+#    #+#             */
-/*   Updated: 2024/09/24 19:02:56 by febouana         ###   ########.fr       */
+/*   Updated: 2024/10/02 01:18:24 by febouana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void error_prompt()
 
 void error_forks(data_t *data)
 {
-	destroy_fork(*data); //! peux possiblement free des fork meme pas allouer et segment
+	destroy_fork(data); //! peux possiblement free des fork meme pas allouer et segment
 	free(data->philosophers); //OKOK
     //free(data); //OKOK
 }
@@ -39,5 +39,25 @@ void good_ending(data_t *data)
     //free(data);
 }
 
-//! doit creer un derive de destroy_fork() qui detruit uniquement ceux ayant eu le temps d'etre crees dans create_foeks sinon: 
-//! "Conditional jump or move depends on uninitialised value(s)"
+int	verif_args(char **args)
+{
+	int	x;
+	int	i;
+
+	x = 1;
+	while (args[x])
+	{
+		i = 0;
+		while (args[x][i])
+		{
+			if (!(args[x][i] >= '0' && args[x][i] <= '9'))
+            {
+                error_prompt();
+                return (2);    
+            }
+			i++;
+		}
+		x++;
+	}
+    return (0);
+}

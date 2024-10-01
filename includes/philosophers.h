@@ -6,18 +6,18 @@
 /*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 14:50:01 by febouana          #+#    #+#             */
-/*   Updated: 2024/09/24 19:11:42 by febouana         ###   ########.fr       */
+/*   Updated: 2024/10/02 01:36:18 by febouana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILOSOPHERS_H
 # define PHILOSOPHERS_H
-# include <pthread.h>  //ABSOLUMENT TOUT'
-# include <stdio.h>    //printf
-# include <stdlib.h>   //malloc+free
-# include <string.h>   //memset
-# include <sys/time.h> //gettimeofday
-# include <unistd.h>   //usleep
+# include <pthread.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <string.h>
+# include <sys/time.h>
+# include <unistd.h>
 
 typedef enum bool
 {
@@ -25,81 +25,97 @@ typedef enum bool
 	true
 }					bool_t;
 
-//* NETTOYAGE ALGO
-//* ==> check si les mutex sont utilises pour checker le status des fork
-//* ==> checker comment la mort des philos sont verifies et s'il y a un mutex pour eviter un philosophe de mourrir (triche)
-
-//* cas relou si 1 seul philo (+ revoir les initialisations ??)
-
 typedef struct philo_status
 {
-	pthread_t			philo;
-	int					philo_id;
-	int					repeat_meal_philo;
-	pthread_mutex_t		fork_l;
-	pthread_mutex_t		*fork_r;
-
-    bool_t 				left_locked;
-    bool_t 				right_locked;			
+	pthread_t			philo; //OKOK
+	int					philo_id; //OKOK ==> id 
+	int					repeat_meal_philo; //OKOK
+	pthread_mutex_t		fork_l; //OKOK
+	pthread_mutex_t		*fork_r; //OKOK
+    bool_t 				left_locked; //OKOK
+    bool_t 				right_locked; //OKOK	
 	
 	long long			last_meal;
-	long long			last_last_meal;
+	long long			last_last_meal; //changer 
+
+	long long start_time;
+
+
+
+	bool_t is_dead;
 
 }					philo_status_t;
 
 typedef struct data
 {
-	philo_status_t	*philosophers;
-	long			nbr_philos;
-	long			time_to_die;
-	long			time_to_eat; 
-	long			time_to_sleep;
-	long			repeat_meal;
-	long long		start_time;
+	philo_status_t	*philosophers; //OKOK
+	long			nbr_philos; //OKOK
+	long			time_to_die; //OKOK
+	long			time_to_eat; //OKOK
+	long			time_to_sleep; //OKOK
+	long			repeat_meal; //OKOK
+	long long		start_time; //OKOK
 
-	bool_t			dead; //! si un philo mort
-	int 			id_philo_dead;
-	long long 		time_death;	
+	pthread_mutex_t print; //OKOK
 
-	pthread_mutex_t print;
+	pthread_mutex_t forks; //OKOK
+
+	//pthread_mutex_t will_die; //! raf?
+		
+	bool_t			stop; //+ le monitor previens les philos de stopper leurs routines
+	bool_t			good_ending; //+ on dit au monitor de s'arreter car good_ending
 
 	
+	int 			id_philo_dead;
+	long long 		time_death;		
 }					data_t;
 
+typedef struct data_idx
+{
+    data_t *data; //program data
+    int idx; //Index of the current thread
+}	data_idx_t;
+
+
 //+ philosophers.c
-void join_philosophers(data_t data);
+void join_philosophers(data_t *data);
 //
 //
 
 //+ philosophers_routine.c
-int 				verif_eating(data_t *data, long obj_usleep, int id);
-int 				verif_sleeping(data_t *data, long obj_usleep, int id);
+int 				verif_eating(data_t *data, long obj_usleep, int id, bool_t status);
+int 				verif_sleeping(data_t *data, long obj_usleep, int id, bool_t status);
 int 				complet_routine(data_t *data, int id);
 void				*philosopher_routine(void *index);
 
 //+ philosophers_utils.c
 data_t				*get_data(void);
-void				destroy_fork(data_t data);
+void				destroy_fork(data_t *data);
 
 int  				check_death(data_t *data, int id);
 int  				check_death_solo(data_t *data, int id);
 long long			get_current_time(void);
 
-int print_action(data_t data, long long time, char *emoji, char *action, int id);
+int print_action2(data_t *data, long long time, char *emoji, char *action, int id, bool_t status);
 
 //+ gestion_errors.c
 void				error(void);
 void				error_prompt(void);
 void				error_forks(data_t *data);
 void				good_ending(data_t *data);
+int					verif_args(char **args);
 
 //+ libft_utils.c
 long				ft_atol(const char *str);
 void				ft_putchar_fd(char c, int fd);
 void				ft_putstr_fd(char *s, int fd);
 
+void				unlock_forks(data_t *data, int id);
 
-data_t 				*get_data_copy();
-void 				unlock_forks(data_t data, int id);
+
+int lock_first_fork(data_t *data, int id, bool_t status);
+int lock_second_fork(data_t *data, int id, bool_t status);
+
+int	print_all_action(data_t *data, int option, int id, long long time, bool_t status);
 
 #endif
