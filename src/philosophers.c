@@ -6,7 +6,7 @@
 /*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 14:49:20 by febouana          #+#    #+#             */
-/*   Updated: 2024/10/04 22:50:22 by febouana         ###   ########.fr       */
+/*   Updated: 2024/10/04 23:03:41 by febouana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void join_philosophers(data_t *data)
         if (pthread_join(data->philosophers[i].philo, NULL) != 0)
         {
             printf("BAMBPOCLAT join philo\n");
-            return ;   //! GESTION ERROR   
+            return ;   //! gestion error
         }
         i++;
     } 
@@ -79,7 +79,7 @@ int create_forks(data_t *data)
     {
         if (pthread_mutex_init(&(data->philosophers[i].fork_l), NULL) != 0)
         {
-            //error_forks(&data); //! peux possiblement free des fork meme pas allouer et segments //? envoyer "i" et destroy jusqu'a sa valeur
+            error_forks(&data); //! peux possiblement free des fork meme pas allouer et segments //? envoyer "i" et destroy jusqu'a sa valeur
             return (2);
         }
         i++;
@@ -118,11 +118,22 @@ int main(int argc, char **argv)
     free(data.philosophers);
 }
 
+
+
+
+
+
+
+
+
+
+//+ TODOLIST :
 //+ mieux opti les cas de routine infini (5 500 200 200 | 4 410 200 200)
-    //+ if nbr_philos == impair => faire sleep les pair plutot qu'eux et inversement 
+    //!if nbr_philos == impair => faire sleep les pair plutot qu'eux et inversement 
+        //! rajouter condition avant de boucler pour faire sleep les bons...
+        //! ... et rajouter un if dans lock_forks (et unlock_forks ?) pour mieux opti aussi du coup
     //+ remettre bool_t dead ?
     //+ pour micro optimiser le calcul final : mettre un tri baleze que pour le premier passage, pas besoin pour ceux d'apres et trop gourmand ??
 //+ refaire destroy_forks()
 //+ finir la gestion d'erreurs (+ refaire au propre les init ?)
 //+ ((norminette))
-//ne pas push avec l'exec hein

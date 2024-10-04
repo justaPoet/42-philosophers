@@ -6,7 +6,7 @@
 /*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 14:50:01 by febouana          #+#    #+#             */
-/*   Updated: 2024/10/04 22:41:12 by febouana         ###   ########.fr       */
+/*   Updated: 2024/10/04 23:04:06 by febouana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ int			take_forks(data_t *data, int id, bool_t dead);
 int			complet_routine(data_t *data, int id);
 void		*philosopher_routine(void *index);
 
-//+ philosophers_routine_utils.c
+//+ philosophers_memento_mori.c
 bool_t		stop_signal(data_t *data, bool_t dead);
 void		will_die(data_t *data, int id);
 int			routine_solo(data_t *data, int id);
@@ -86,7 +86,7 @@ int			print_all_action(data_t *data, int option, int id, long long time);
 //+ gestion_errors.c
 void		error_prompt(void);
 void		error_forks(data_t *data);
-void	destroy_fork(data_t *data); //! a ameliorer
+void		destroy_fork(data_t *data);
 int			verif_args(char **args);
 int			parsing_args(data_t *data, int argc, char **args);
 
