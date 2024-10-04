@@ -6,7 +6,7 @@
 /*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 14:50:01 by febouana          #+#    #+#             */
-/*   Updated: 2024/10/03 22:05:46 by febouana         ###   ########.fr       */
+/*   Updated: 2024/10/04 21:39:45 by febouana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,11 @@ typedef enum bool
 typedef struct philo_status
 {
 	pthread_t			philo; //OKOK
-	int 				id;
+	// int 				id; //!
 	pthread_mutex_t		fork_l; //OKOK
 	pthread_mutex_t		*fork_r; //OKOK
 	int					repeat_meal_philo; //OKOK
-	long long			last_meal; //changer?
-	long long			last_last_meal; //changer?
+	long long			last_meal; //OKOK
     bool_t 				left_locked; //OKOK
     bool_t 				right_locked; //OKOK	
 
@@ -117,6 +116,6 @@ void monitor_checker(void *dataaa);
 void checkcheck_death(data_t *data);
 
 
-bool_t stop_signal(data_t *data);
+bool_t stop_signal(data_t *data, bool_t dead);
 
 #endif

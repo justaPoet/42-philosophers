@@ -6,7 +6,7 @@
 /*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 14:49:20 by febouana          #+#    #+#             */
-/*   Updated: 2024/10/03 22:05:25 by febouana         ###   ########.fr       */
+/*   Updated: 2024/10/04 21:45:27 by febouana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,11 +45,9 @@ void create_philosophers(data_t *data)
     {
         data->philosophers[i].repeat_meal_philo = data->repeat_meal; 
         data->philosophers[i].last_meal = 0; 
-        data->philosophers[i].last_last_meal = 0;
-        data->philosophers[i].id = i; //id pour print mort
+        // data->philosophers[i].id = i; //!
         data->philosophers[i].is_dead = false;
-
-        data->philosophers[i].right_locked = false;
+        data->philosophers[i].left_locked = false;
         data->philosophers[i].right_locked = false;
         
         data_idx_t *data_idx = malloc(sizeof(*data_idx));
@@ -60,7 +58,6 @@ void create_philosophers(data_t *data)
             return ;
         i++;
     }   
-   // checkcheck_death(data);
 }
 
 //? OKOK
@@ -150,7 +147,8 @@ int main(int argc, char **argv)
     destroy_fork(&data);
     if (data.stop == false && data.repeat_meal > 0)
         printf("\nEach philosopher ate %ld time(s) 🏆\n", data.repeat_meal);
-    pthread_mutex_destroy(&data.m_print);    
+    pthread_mutex_destroy(&data.m_print);  
+    pthread_mutex_destroy(&data.m_stop);    
     free(data.philosophers);
 }
 

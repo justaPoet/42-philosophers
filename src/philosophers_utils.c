@@ -6,7 +6,7 @@
 /*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 17:30:39 by febouana          #+#    #+#             */
-/*   Updated: 2024/10/03 22:03:37 by febouana         ###   ########.fr       */
+/*   Updated: 2024/10/04 21:54:11 by febouana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,25 +42,52 @@ void destroy_fork(data_t *data)
 
 void unlock_forks(data_t *data, int id) 
 {
-    if (data->philosophers[id].right_locked == true)
+    if (id % 2 != 0)
     {
-        pthread_mutex_unlock(data->philosophers[id].fork_r);
-        data->philosophers[id].right_locked = false;
+        if (data->philosophers[id].right_locked == true)
+        {
+            pthread_mutex_unlock(data->philosophers[id].fork_r);
+            data->philosophers[id].right_locked = false;
+        }
+        if (data->philosophers[id].left_locked == true)
+        {
+            pthread_mutex_unlock(&data->philosophers[id].fork_l);
+            data->philosophers[id].left_locked = false;
+        }
     }
-    if (data->philosophers[id].left_locked == true)
+    else 
     {
-        pthread_mutex_unlock(&data->philosophers[id].fork_l);
-        data->philosophers[id].left_locked = false;
+        if (data->philosophers[id].left_locked == true)
+        {
+            pthread_mutex_unlock(&data->philosophers[id].fork_l);
+            data->philosophers[id].left_locked = false;
+        }
+        if (data->philosophers[id].right_locked == true)
+        {
+            pthread_mutex_unlock(data->philosophers[id].fork_r);
+            data->philosophers[id].right_locked = false;
+        }
     }
 }
 
+// void unlock_forks(data_t *data, int id) 
+// {
+//     if (data->philosophers[id].right_locked == true)
+//     {
+//         pthread_mutex_unlock(data->philosophers[id].fork_r);
+//         data->philosophers[id].right_locked = false;
+//     }
+//     if (data->philosophers[id].left_locked == true)
+//     {
+//         pthread_mutex_unlock(&data->philosophers[id].fork_l);
+//         data->philosophers[id].left_locked = false;
+//     }
+// }
+
 int lock_second_fork(data_t *data, int id, bool_t dead)
 {
-    if (stop_signal(data) || dead)
-    {      
-        unlock_forks(data, id);
-        return (2);
-    }
+    if (dead)
+        return (2);   
     if (id % 2 != 0)
     {
         pthread_mutex_lock(&data->philosophers[id].fork_l);
@@ -77,11 +104,8 @@ int lock_second_fork(data_t *data, int id, bool_t dead)
 
 int lock_first_fork(data_t *data, int id, bool_t dead)
 {
-    if (stop_signal(data) || dead)
-    {
-        unlock_forks(data, id);
-        return (2);
-    }
+    if (dead)
+        return (2); 
     if (id % 2 != 0)
     {
         pthread_mutex_lock(data->philosophers[id].fork_r);
