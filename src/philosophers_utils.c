@@ -6,13 +6,12 @@
 /*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 17:30:39 by febouana          #+#    #+#             */
-/*   Updated: 2024/10/04 21:54:11 by febouana         ###   ########.fr       */
+/*   Updated: 2024/10/04 22:28:33 by febouana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philosophers.h"
 
-//? Permet de retourner le temps de depart EPOCH.
 long long    get_current_time(void)
 {
     struct timeval    tv;
@@ -22,22 +21,6 @@ long long    get_current_time(void)
         return (-1);
     milliseconds = (tv.tv_sec * 1000LL) + (tv.tv_usec / 1000LL);
     return (milliseconds);
-}
-
-void destroy_fork(data_t *data)
-{
-    int i;
-    
-    i = 0;
-    while (i < data->nbr_philos)
-    {
-        if (pthread_mutex_destroy(&data->philosophers[i].fork_l) != 0)
-        {
-            printf("BAMBPOCLAT destroy fork\n");
-            return ; //!GESTION ERROR
-        }
-        i++;
-    }   
 }
 
 void unlock_forks(data_t *data, int id) 
@@ -70,20 +53,6 @@ void unlock_forks(data_t *data, int id)
     }
 }
 
-// void unlock_forks(data_t *data, int id) 
-// {
-//     if (data->philosophers[id].right_locked == true)
-//     {
-//         pthread_mutex_unlock(data->philosophers[id].fork_r);
-//         data->philosophers[id].right_locked = false;
-//     }
-//     if (data->philosophers[id].left_locked == true)
-//     {
-//         pthread_mutex_unlock(&data->philosophers[id].fork_l);
-//         data->philosophers[id].left_locked = false;
-//     }
-// }
-
 int lock_second_fork(data_t *data, int id, bool_t dead)
 {
     if (dead)
@@ -98,7 +67,7 @@ int lock_second_fork(data_t *data, int id, bool_t dead)
         pthread_mutex_lock(data->philosophers[id].fork_r);
         data->philosophers[id].right_locked = true;
     }    
-    print_all_action(data, 0, id, get_current_time() - data->start_time, dead); //!
+    print_all_action(data, 0, id, get_current_time() - data->start_time);
     return (0);
 }
 
@@ -116,14 +85,14 @@ int lock_first_fork(data_t *data, int id, bool_t dead)
         pthread_mutex_lock(&data->philosophers[id].fork_l);
         data->philosophers[id].left_locked = true;
     }
-    print_all_action(data, 0, id, get_current_time() - data->start_time, dead);
+    print_all_action(data, 0, id, get_current_time() - data->start_time);
     return (0);
 }
 
-int	print_all_action(data_t *data, int option, int id, long long time, bool_t dead)
+int	print_all_action(data_t *data, int option, int id, long long time)
 {
     pthread_mutex_lock(&data->m_print);
-    if (dead)
+    if (data->philosophers[id].is_dead)
     {
         pthread_mutex_unlock(&data->m_print);
         return (2);
@@ -139,3 +108,17 @@ int	print_all_action(data_t *data, int option, int id, long long time, bool_t de
     pthread_mutex_unlock(&data->m_print);
     return (0);
 }
+
+// void unlock_forks(data_t *data, int id) 
+// {
+//     if (data->philosophers[id].right_locked == true)
+//     {
+//         pthread_mutex_unlock(data->philosophers[id].fork_r);
+//         data->philosophers[id].right_locked = false;
+//     }
+//     if (data->philosophers[id].left_locked == true)
+//     {
+//         pthread_mutex_unlock(&data->philosophers[id].fork_l);
+//         data->philosophers[id].left_locked = false;
+//     }
+// }
