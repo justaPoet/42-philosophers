@@ -6,86 +6,119 @@
 /*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 14:52:56 by febouana          #+#    #+#             */
-/*   Updated: 2024/10/04 22:48:19 by febouana         ###   ########.fr       */
+/*   Updated: 2024/10/10 19:58:22 by febouana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philosophers.h"
 
-int verif_sleeping_thinking(data_t *data, long time_to_sleep, int id)
-{    
-    if (time_to_sleep >= data->time_to_die)
-    {
-        will_die(data, id);
-        return (2);
-    }
-    if (stop_signal(data, data->philosophers[id].is_dead))
-        return (2);
-    print_all_action(data, 2, id, get_current_time() - data->start_time); //!
-    usleep(time_to_sleep * 1000);
-    print_all_action(data, 3, id, get_current_time() - data->start_time); //? safe
-    return (0);
-}
-
-int verif_eating(data_t *data, long time_to_eat, int id)
-{    
-    //printf("$$$$$$$<%d> last_meal - last_last_meal==%lld\n", id + 1, (get_current_time() - data->start_time) - data->philosophers[id].last_meal);
-    if (data->time_to_die < ((get_current_time() - data->start_time) - data->philosophers[id].last_meal))
-    {
-        will_die(data, id);
-        return (2);
-    }
-    if (stop_signal(data, data->philosophers[id].is_dead))
-        return (2);
-    data->philosophers[id].last_meal =  get_current_time() - data->start_time;  //?safe
-    usleep(time_to_eat * 1000);
-    print_all_action(data, 1, id, get_current_time() - data->start_time); //!
-    unlock_forks(data, id);
-    return (0);
-}
-
-int take_forks(data_t *data, int id, bool_t dead)
+long long	get_current_time(void)
 {
-    lock_first_fork(data, id, dead);
-    lock_second_fork(data, id, dead);
-    return (0);
+	struct timeval	tv;
+	long long		milliseconds;
+
+	if (gettimeofday(&tv, NULL) == -1)
+		return (-1);
+	milliseconds = (tv.tv_sec * 1000LL) + (tv.tv_usec / 1000LL);
+	return (milliseconds);
 }
 
-//./philo [number_of_philosophers] [time_to_die] [time_to_eat] [time_to_sleep] ([number_of_times_each_philosopher_must_eat])
-int complet_routine(data_t *data, int id)
+int	ft_usleep(long time)
 {
-    if (data->time_to_die <= (data->time_to_eat))
-    {
-        will_die(data, id);
-        return (2);
-    }
-    else 
-    {
-        if (id % 2 != 0)
-            usleep(data->time_to_eat * 1000);
-    }
-    while(data->philosophers[id].repeat_meal_philo != 0)
-    {   
-        if (data->philosophers[id].is_dead || stop_signal(data, data->philosophers[id].is_dead))
-            break ;
-        take_forks(data, id, data->philosophers[id].is_dead);
-        verif_eating(data, data->time_to_eat, id);
-        verif_sleeping_thinking(data, data->time_to_sleep, id);
-        data->philosophers[id].repeat_meal_philo--; //?safe
-    }
-    unlock_forks(data, id);
-    return (0);
+	long	end;
+	long	start;
+
+	start = get_current_time();
+	end = get_current_time();
+
+	time /= 1000;
+
+	while (end - start < time)
+	{
+		// printf("TIME==%ld\n", time);
+		// printf("END-START==%ld\n", end - start);
+		usleep(500);
+		end = get_current_time();
+		// if (end == -1)
+		// 	return (2);
+	}
+	return (0);
+}
+
+//? + > - == 1 | + < - == 0
+int	verif_thinking(t_data *data, int id)
+{
+	if (stop_signal(data, data->philosophers[id].is_dead))
+		return (2);
+	// printf("FN-TIME==%lld\n", get_current_time() - data->start_time);
+	ft_print(data, 3, id, get_current_time() - data->start_time);
+	ft_usleep((data->time_to_eat > data->time_to_sleep) * (data->time_to_eat - data->time_to_sleep) + 125);
+	return (0);
+}
+
+int	verif_sleeping(t_data *data, long time_to_sleep, int id)
+{
+	if (time_to_sleep >= data->time_to_die)
+	{
+		will_die(data, id);
+		return (2);
+	}
+	if (stop_signal(data, data->philosophers[id].is_dead))
+		return (2);
+	ft_print(data, 2, id, get_current_time() - data->start_time);
+	ft_usleep(time_to_sleep);
+	return (0);
+}
+
+int	verif_eating(t_data *data, long time_to_eat, int id)
+{
+	if (data->time_to_die / 1000 < ((get_current_time() - data->start_time) - data->philosophers[id].last_meal))
+	{
+		will_die(data, id);
+		return (2);
+	}
+	if (stop_signal(data, data->philosophers[id].is_dead))
+		return (2);
+	data->philosophers[id].last_meal = get_current_time() - data->start_time;
+	ft_print(data, 1, id, get_current_time() - data->start_time);
+	ft_usleep(time_to_eat);
+	direction_unlock_forks(data, id);
+	return (0);
+}
+
+int	complet_routine(t_data *data, int id)
+{
+	if (data->time_to_die <= (data->time_to_eat))
+	{
+		will_die(data, id);
+		return (2);
+	}
+	if (data->philosophers[id].id % 2 != 0)
+		ft_usleep(data->time_to_eat);
+	while (data->philosophers[id].repeat_meal_philo != 0)
+	{
+		if (data->philosophers[id].is_dead || stop_signal(data,
+				data->philosophers[id].is_dead))
+			break ;
+		lock_forks(data, id);
+		verif_eating(data, data->time_to_eat, id);
+		verif_sleeping(data, data->time_to_sleep, id);
+		verif_thinking(data, id);
+		data->philosophers[id].repeat_meal_philo--;
+	}
+	direction_unlock_forks(data, id);
+	return (0);
 }
 
 void	*philosopher_routine(void *philo)
 {
-    data_idx_t data_index = *(data_idx_t *)philo;
-    free(philo);
-    
-    if (data_index.data->nbr_philos == 1)
-        routine_solo(data_index.data, data_index.idx);
-    else
-        complet_routine(data_index.data, data_index.idx);
-    return (NULL);
-}
+	t_data_tmp	data_tmp;
 
+	data_tmp = *(t_data_tmp *)philo;
+	free(philo);
+	if (data_tmp.data->nbr_philos == 1)
+		routine_solo(data_tmp.data, data_tmp.id);
+	else
+		complet_routine(data_tmp.data, data_tmp.id);
+	return (NULL);
+}
