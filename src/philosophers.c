@@ -6,7 +6,7 @@
 /*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 14:49:20 by febouana          #+#    #+#             */
-/*   Updated: 2024/10/10 19:01:51 by febouana         ###   ########.fr       */
+/*   Updated: 2024/10/14 19:34:28 by febouana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,13 +61,13 @@ int	init_struct(t_data *data)
 	int	i;
 
 	i = 0;
-	data->start_time = get_current_time();
+	data->stop = false;
+	data->start_time = get_start_time();
 	if (data->start_time == -1)
 	{
 		error_quit(data, data->nbr_philos);
 		return (2);
 	}
-	data->stop = false;
 	pthread_mutex_init(&data->m_print, NULL);
 	pthread_mutex_init(&data->m_stop, NULL);
 	while (i < data->nbr_philos)
@@ -83,15 +83,17 @@ int	init_struct(t_data *data)
 	return (0);
 }
 
+// if (data->nbr_philos > 200 || data->nbr_philos == 0
+// 	|| data->time_to_die < 60 || data->time_to_eat < 60
+// 	|| data->time_to_sleep < 60)
 int	parsing_args(t_data *data, int argc, char **args)
 {
 	data->nbr_philos = ft_atol(args[1]);
-	data->time_to_die = ft_atol(args[2]) * 1000;
-	data->time_to_eat = ft_atol(args[3]) * 1000;
-	data->time_to_sleep = ft_atol(args[4]) * 1000;
-	if (data->nbr_philos > 200 || data->nbr_philos == 0
-		|| data->time_to_die < 60 || data->time_to_eat < 60
-		|| data->time_to_sleep < 60)
+	data->time_to_die = ft_atol(args[2]);
+	data->time_to_eat = ft_atol(args[3]);
+	data->time_to_sleep = ft_atol(args[4]);
+	if (data->nbr_philos <= 0 || data->time_to_die <= 0
+		|| data->time_to_eat <= 0 || data->time_to_sleep <= 0)
 	{
 		error_prompt();
 		return (2);

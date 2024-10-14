@@ -6,7 +6,7 @@
 /*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 14:50:01 by febouana          #+#    #+#             */
-/*   Updated: 2024/10/10 19:49:52 by febouana         ###   ########.fr       */
+/*   Updated: 2024/10/14 20:06:07 by febouana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,19 +72,26 @@ void				*philosopher_routine(void *index);
 
 //+ philosophers_memento_mori.c
 t_bool				stop_signal(t_data *data, t_bool dead);
-void				will_die(t_data *data, int id);
+void				will_die(t_data *data, long long int time_death, int id);
+long long			get_start_time(void);
+void				time_stop(t_data *data, int id);
 int					routine_solo(t_data *data, int id);
 
 //+ philosophers_utils.c
+long long			get_current_time(t_data *data, int id);
+void				ft_usleep(t_data *data, long long int time, int id);
 void				assign_fork(t_data *data);
-int					create_forks(t_data *data);
-long long			get_current_time(void);
 void				good_ending(t_data *data);
 int					ft_print(t_data *data, int option, int id, long long time);
 
-//+ philosophers_forks.c
-int					lock_forks(t_data *data, int id);
+//+ philosophers_forks1.c
+int					create_forks(t_data *data);
+int					direction_lock_forks(t_data *data, int id);
 void				direction_unlock_forks(t_data *data, int id);
+
+//+ philosophers_forks2.c
+void				lock_forks(t_data *data, int id);
+void				lock_forks_odd(t_data *data, int id);
 void				unlock_forks(t_data *data, int id);
 void				unlock_forks_odd(t_data *data, int id);
 
@@ -99,7 +106,5 @@ int					verif_args(char **args);
 long				ft_atol(const char *str);
 void				ft_putchar_fd(char c, int fd);
 void				ft_putstr_fd(char *s, int fd);
-
-int	ft_usleep(long time);
 
 #endif

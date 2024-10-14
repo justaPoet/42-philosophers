@@ -6,7 +6,7 @@
 /*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 19:38:53 by febouana          #+#    #+#             */
-/*   Updated: 2024/10/08 21:17:44 by febouana         ###   ########.fr       */
+/*   Updated: 2024/10/14 19:45:15 by febouana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 void	error_prompt(void)
 {
-	ft_putstr_fd("\033[31m$> ./philo [number_of_philosophers] [time_to_die] [time_to_eat] [time_to_sleep] \
-	 ([number_of_times_each_philosopher_must_eat])\033[0m\n", 2);
+	ft_putstr_fd("\033[31m$> ./philo [number_of_philosophers] [time_to_die] [time_to_eat] [time_to_sleep]\
+	([number_of_times_each_philosopher_must_eat])\033[0m\n", 2);
 }
 
 void	error_quit(t_data *data, int limit)
