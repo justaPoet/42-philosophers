@@ -6,7 +6,7 @@
 /*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 22:30:24 by febouana          #+#    #+#             */
-/*   Updated: 2024/10/14 20:18:38 by febouana         ###   ########.fr       */
+/*   Updated: 2024/10/15 16:02:34 by febouana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,11 @@ void	will_die(t_data *data, long long int time_death, int id)
 	pthread_mutex_lock(&data->m_stop);
 	if (data->stop == false)
 	{
+		time_death = get_current_time(data, id) - data->start_time;
+		usleep(1000);
+		ft_print(data, 4, data->philosophers[id].id, time_death);
 		data->stop = true;
 		unlock_forks(data, id);
-		ft_usleep(data, time_death, id);
-		ft_print(data, 4, id, get_current_time(data, id) - data->start_time);
 		data->philosophers[id].is_dead = true;
 	}
 	pthread_mutex_unlock(&data->m_stop);

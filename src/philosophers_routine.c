@@ -6,7 +6,7 @@
 /*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 14:52:56 by febouana          #+#    #+#             */
-/*   Updated: 2024/10/14 20:02:42 by febouana         ###   ########.fr       */
+/*   Updated: 2024/10/15 15:57:31 by febouana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	verif_thinking(t_data *data, int id)
 		return (2);
 	ft_print(data, 3, id, get_current_time(data, id) - data->start_time);
 	ft_usleep(data, (data->time_to_eat > data->time_to_sleep)
-		* (data->time_to_eat - data->time_to_sleep) + 1, id + 1);
+		* (data->time_to_eat - data->time_to_sleep) + 1, id);
 	return (0);
 }
 
@@ -33,7 +33,7 @@ int	verif_sleeping(t_data *data, long time_to_sleep, int id)
 	if (stop_signal(data, data->philosophers[id].is_dead))
 		return (2);
 	ft_print(data, 2, id, get_current_time(data, id) - data->start_time);
-	ft_usleep(data, time_to_sleep, id + 1);
+	ft_usleep(data, time_to_sleep, id);
 	return (0);
 }
 
@@ -53,7 +53,7 @@ int	verif_eating(t_data *data, long time_to_eat, int id)
 	data->philosophers[id].last_meal = get_current_time(data, id)
 		- data->start_time;
 	ft_print(data, 1, id, get_current_time(data, id) - data->start_time);
-	ft_usleep(data, time_to_eat, id + 1);
+	ft_usleep(data, time_to_eat, id);
 	direction_unlock_forks(data, id);
 	return (0);
 }
@@ -61,7 +61,7 @@ int	verif_eating(t_data *data, long time_to_eat, int id)
 int	complet_routine(t_data *data, int id)
 {
 	if (data->philosophers[id].id % 2 != 0)
-		ft_usleep(data, data->time_to_eat, id + 1);
+		ft_usleep(data, data->time_to_eat, id);
 	while (data->philosophers[id].repeat_meal_philo != 0)
 	{
 		if (data->philosophers[id].is_dead || stop_signal(data,

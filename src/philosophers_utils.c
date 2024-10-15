@@ -6,7 +6,7 @@
 /*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 17:30:39 by febouana          #+#    #+#             */
-/*   Updated: 2024/10/14 20:18:57 by febouana         ###   ########.fr       */
+/*   Updated: 2024/10/15 16:11:53 by febouana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,15 @@ void	ft_usleep(t_data *data, long long int time, int id)
 
 	start_time = get_current_time(data, id);
 	while (get_current_time(data, id) - start_time < time)
+	{
+		if (data->time_to_die < ((get_current_time(data, id) - data->start_time)
+				- data->philosophers[id].last_meal))
+		{
+			will_die(data, 0, id);
+			return ;
+		}
 		usleep(10);
+	}
 }
 
 void	assign_fork(t_data *data)
@@ -65,11 +73,6 @@ int	ft_print(t_data *data, int option, int id, long long time)
 		"%ld 🤔 (%d) is thinking\n", "%ld ☠️  (%d) died\n"};
 
 	pthread_mutex_lock(&data->m_print);
-	if (data->philosophers[id].is_dead)
-	{
-		pthread_mutex_unlock(&data->m_print);
-		return (2);
-	}
 	if (option == -1)
 		printf("Error\nTime\n");
 	else

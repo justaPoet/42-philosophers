@@ -6,7 +6,7 @@
 /*   By: febouana <febouana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 20:06:01 by febouana          #+#    #+#             */
-/*   Updated: 2024/10/14 20:06:59 by febouana         ###   ########.fr       */
+/*   Updated: 2024/10/15 15:28:34 by febouana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,18 +37,12 @@ void	lock_forks_odd(t_data *data, int id)
 	pthread_mutex_lock(data->philosophers[id].fork_r);
 	data->philosophers[id].right_locked = true;
 	if (stop_signal(data, data->philosophers[id].is_dead))
-	{
-		direction_unlock_forks(data, id);
 		return ;
-	}
 	ft_print(data, 0, id, get_current_time(data, id) - data->start_time);
 	pthread_mutex_lock(&data->philosophers[id].fork_l);
 	data->philosophers[id].left_locked = true;
 	if (stop_signal(data, data->philosophers[id].is_dead))
-	{
-		direction_unlock_forks(data, id);
 		return ;
-	}
 	ft_print(data, 0, id, get_current_time(data, id) - data->start_time);
 }
 
